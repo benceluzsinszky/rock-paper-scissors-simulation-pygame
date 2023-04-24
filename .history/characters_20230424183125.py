@@ -1,0 +1,6 @@
+import pygame
+
+class Character():
+    """
+    
+    """

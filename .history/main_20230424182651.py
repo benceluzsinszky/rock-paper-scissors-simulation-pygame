@@ -1,0 +1,37 @@
+import pygame
+import sys
+
+
+class Game():
+
+    def __init__(self) -> None:
+        pygame.init()
+
+        self.clock = pygame.time.Clock()
+
+        pygame.display.set_caption("Rock Paper Scissors")
+
+        self.screen = pygame.display.set_mode((500, 500))
+
+    def run_game(self):
+        while True:
+            self.check_events()
+            self.update_screen()
+            self.clock.tick(60)
+
+    def update_screen(self):
+        self.screen.fill(())
+
+    def check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+
+
+if __name__ == "__main__":
+    game = Game()
+    game.run_game()
