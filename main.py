@@ -39,9 +39,9 @@ class Game():
         while True:
             self.check_events()
             # self.rocks.sprites()[0].eat(self.scissors)
-            self.move_sprites(self.rocks, self.scissors, self.papers)
-            self.move_sprites(self.scissors, self.papers, self.rocks)
-            self.move_sprites(self.papers, self.rocks, self.scissors)
+            self.move_sprites(self.rocks, self.scissors)
+            self.move_sprites(self.scissors, self.papers)
+            self.move_sprites(self.papers, self.rocks)
             self.check_collisions()
             self.update_screen()
             self.clock.tick(60)
@@ -70,27 +70,30 @@ class Game():
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
 
-    def collision(self, winner, loser, type):
-        collision = pygame.sprite.groupcollide(winner, loser, False, True)
+    def collision(self, wached_group, loser_group, type):
+        self_collision = pygame.sprite.groupcollide(wached_group, wached_group, False, False)
+        if self_collision:
+            ...
+
+        collision = pygame.sprite.groupcollide(wached_group, loser_group, False, True)
 
         if collision:
             dead_sprite_rect_x = list(collision.values())[0][0].rect.x
             dead_sprite_rect_y = list(collision.values())[0][0].rect.y
-            # list(collision.keys())[0].closest_food_distance = float("inf")
             sprite = Sprite(self, type, (dead_sprite_rect_x, dead_sprite_rect_y))
-            winner.add(sprite)
+            wached_group.add(sprite)
 
     def check_collisions(self):
         self.collision(self.rocks, self.scissors, "rock")
         self.collision(self.scissors, self.papers, "scissors")
         self.collision(self.papers, self.rocks, "paper")
 
-    def move_sprites(self, wathced_group, food, enemy):
-        for sprite in wathced_group:
-            sprite.action(food, enemy)
+    def move_sprites(self, current, food):
+        for sprite in current:
+            sprite.eat(current, food)
 
     def create_sprites(self, type, group):
-        for _ in range(10):
+        for _ in range(30):
             random_x = random.randint(10, 490)
             random_y = random.randint(10, 490)
             sprite = Sprite(self, type, (random_x, random_y))

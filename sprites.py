@@ -33,7 +33,8 @@ class Sprite(Sprite):
                 self.closest_food_distance = distance
                 self.closest_food = sprite
 
-    def eat(self):
+    def eat(self, current, food):
+        self.get_food_info(food)
         try:
             direction = pygame.math.Vector2(self.closest_food.rect.center) - pygame.math.Vector2(self.rect.center)
             try:
@@ -46,7 +47,11 @@ class Sprite(Sprite):
                 self.rect.left > 0 and
                 self.rect.right < 500
                  ):
-                self.rect.move_ip(direction * 2)
+                self.rect.move_ip(direction * 3)
+                for sprite in current:
+                    if sprite != self:
+                        if pygame.sprite.collide_rect(self, sprite):  # TODO: self collision
+                            self.rect.move_ip(direction * -2)
         except AttributeError:
             pass
         self.closest_food_distance = float("inf")
@@ -59,7 +64,7 @@ class Sprite(Sprite):
                 self.closest_enemy_distance = distance
                 self.closest_enemy = sprite
 
-    def run(self):
+    def run(self, current):
         direction = pygame.math.Vector2(self.closest_enemy.rect.center) - pygame.math.Vector2(self.rect.center)
         try:
             direction.normalize_ip()
@@ -71,13 +76,18 @@ class Sprite(Sprite):
             self.rect.left > 0 and
             self.rect.right < 500
              ):
-            self.rect.move_ip(direction * -2)
+            self.rect.move_ip(direction * - 3)
+            for sprite in current:
+                if sprite != self:
+                    if pygame.sprite.collide_rect(self, sprite):
+                        self.rect.move_ip(direction * 2)
         self.closest_enemy_distance = float("inf")
 
-    def action(self, food, enemy):
+    def action(self, current, food, enemy):
         self.get_food_info(food)
         self.get_enemy_info(enemy)
-        if self.closest_enemy_distance < 35:
-            self.run()
-        else:
-            self.eat()
+        self.eat(current)
+        # if self.closest_enemy_distance < 35:
+        #     self.run(current)
+        # else:
+        #     self.eat(current)
