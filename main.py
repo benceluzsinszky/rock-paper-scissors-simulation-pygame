@@ -55,7 +55,6 @@ class Game():
         Updates the game screen with new information.
         """
         self.screen.fill((255, 255, 255))
-
         self.draw_score()
 
         for group in self.sprite_groups:
@@ -76,32 +75,40 @@ class Game():
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
 
-    def collision(self, wached_group, loser_group, type):
-        self_collision = pygame.sprite.groupcollide(
-            wached_group, wached_group, False, False)
-        if self_collision:
-            ...
+    def collision(self, hunter_group, food_group, type):
+        """
+        Kills food sprite, creates a new sprite in the 'hunter' group
+        """
+        for hunter in hunter_group:
+            for food in food_group:
+                collision = pygame.sprite.collide_rect(
+                    hunter, food)
 
-        collision = pygame.sprite.groupcollide(
-            wached_group, loser_group, False, True)
-
-        if collision:
-            dead_sprite_rect_x = list(collision.values())[0][0].rect.x
-            dead_sprite_rect_y = list(collision.values())[0][0].rect.y
-            sprite = Sprite(
-                self, type, (dead_sprite_rect_x, dead_sprite_rect_y))
-            wached_group.add(sprite)
+                if collision:
+                    sprite = Sprite(
+                        self, type, (food.rect.x, food.rect.y))
+                    hunter_group.add(sprite)
+                    food.kill()
 
     def check_collisions(self):
+        """
+        Check for collisions between sprite groups.
+        """
         self.collision(self.rocks, self.scissors, "rock")
         self.collision(self.scissors, self.papers, "scissors")
         self.collision(self.papers, self.rocks, "paper")
 
     def move_sprites(self, current, food, enemy):
+        """
+        Makes sprites move.
+        """
         for sprite in current:
             sprite.action(current, food, enemy)
 
     def create_sprites(self, type, group):
+        """
+        Generates initial sprites.
+        """
         for _ in range(STARTING_SPRITES):
             random_x = random.randint(10, 490)
             random_y = random.randint(10, 490)
@@ -109,33 +116,19 @@ class Game():
             group.add(sprite)
 
     def draw_score(self):
-        multipilier = RESX / (STARTING_SPRITES * 3)  # TODO: counting is off
+        """
+        Draw score lines on the bottom.
+        """
+        multipilier = RESX / (STARTING_SPRITES * 3)
 
         len_rocks = len(self.rocks) * multipilier
         len_papers = len(self.papers) * multipilier
-        len_scissors = len(self.scissors) * multipilier
 
-        pygame.draw.rect(self.screen, 'red', [0, RESY-25, len_rocks, RESY])
-        pygame.draw.rect(self.screen, 'green', [
+        pygame.draw.rect(self.screen, (166, 208, 221), [0, RESY-25, len_rocks, RESY])
+        pygame.draw.rect(self.screen, (255, 211, 176), [
                          len_rocks, RESY-25, len_papers, RESY])
-        pygame.draw.rect(self.screen, 'blue', [
+        pygame.draw.rect(self.screen, (255, 105, 105), [
                          len_rocks+len_papers, RESY-25, RESX, RESY])
-
-        # rock_image = pygame.image.load("sprites/rock.png")
-        # rock_image = pygame.transform.scale(rock_image, (25, 25))
-        # paper_image = pygame.image.load("sprites/paper.png")
-        # paper_image = pygame.transform.scale(paper_image, (25, 25))
-        # scissors_image = pygame.image.load("sprites/scissors.png")
-        # scissors_image = pygame.transform.scale(scissors_image, (25, 25))
-
-        # if len_rocks > 0:
-        #     self.screen.blit(rock_image, [len_rocks/2-20, RESY-40])
-        # if len_papers > 0:
-        #     self.screen.blit(
-        #         paper_image, [len_rocks+len_papers-len_papers/2-20, RESY-40])
-        # if len_scissors > 0:
-        #     self.screen.blit(scissors_image, [
-        #                      len_rocks+len_papers+len_scissors-len_scissors/2-20, RESY-40])
 
 
 if __name__ == "__main__":
