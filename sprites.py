@@ -86,7 +86,7 @@ class Sprite(Sprite):
                     direction.normalize_ip()
                 except ValueError:
                     pass
-                self.rect.move_ip(direction * - 1.25)
+                self.rect.move_ip(direction * - 2)
             except AttributeError:
                 pass
             self.closest_enemy_distance = float("inf")
@@ -134,7 +134,8 @@ class Sprite(Sprite):
         self.get_enemy_info(enemy)
         self.check_walls()
         self.eat()
-        self.run()
+        if self.closest_enemy_distance < 50:
+            self.run()
         self.check_self_collision(current)
 
     def blit_sprite(self):
