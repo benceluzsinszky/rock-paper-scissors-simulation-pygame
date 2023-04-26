@@ -27,8 +27,11 @@ class Game():
         pygame.display.set_caption("Rock Paper Scissors")
 
         self.screen = pygame.display.set_mode((RESX, RESY))
+        self.font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 24)
 
         self.group_size = 50
+
+        self.running = False
 
     def main_menu(self):
         """Run the main loop for the menu."""
@@ -40,13 +43,9 @@ class Game():
             handleColour=(87, 117, 127))
 
         while True:
-            # get mouse position
-            mx, my = pygame.mouse.get_pos()
-
             self.screen.fill(BG_COLOR)
 
             counter_font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 12)
-            play_font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 24)
 
             self.group_size = self.slider.getValue()
             counter_image = counter_font.render(f"Group size: {self.group_size}", 1, (43, 57, 61))
@@ -54,20 +53,25 @@ class Game():
             counter_rect.center = (250, 275)
             self.screen.blit(counter_image, counter_rect)
 
-            play_image = play_font.render("PLAY", 1, (43, 57, 61))
+            play_image = self.font.render("PLAY", 1, (43, 57, 61))
             play_rect = play_image.get_rect()
             play_rect.center = (250, 350)
 
+            # get mouse position
+            mx, my = pygame.mouse.get_pos()
             # make play text colored when mouse is hovered on it
             if play_rect.collidepoint(mx, my):
-                play_image = play_font.render("PLAY", 1, (166, 208, 221))
+                play_image = self.font.render("PLAY", 1, (166, 208, 221))
                 if self.click:
+                    self.slider.hide()
+                    self.running = True
                     self.run_game()
             self.click = False
 
             self.screen.blit(play_image, play_rect)
 
             self.check_events()
+            pygame_widgets.update(pygame.event.get())
             pygame.display.flip()
             self.clock.tick(60)
 
@@ -85,13 +89,62 @@ class Game():
         self.create_sprites("paper", self.papers)
         self.create_sprites("scissors", self.scissors)
 
-        while True:
+        while self.running:
             self.check_events()
             self.move_sprites(self.rocks, self.scissors, self.papers)
             self.move_sprites(self.scissors, self.papers, self.rocks)
             self.move_sprites(self.papers, self.rocks, self.scissors)
             self.check_collisions()
             self.update_screen()
+            self.clock.tick(60)
+
+    def game_over(self):
+        """
+        Game over screen, that shows the winner.
+        """
+        while self.game_over:
+            self.screen.fill(BG_COLOR)
+
+            if self.winner_group == self.rocks:
+                winner = "ROCK"
+            elif self.winner_group == self.papers:
+                winner = "PAPER"
+            elif self.winner_group == self.scissors:
+                winner = "SCISSORS"
+
+            winner_image = self.font.render(f"{winner} WON!", 1, (43, 57, 61))
+            winner_rect = winner_image.get_rect()
+            winner_rect.center = (250, 200)
+
+            restart_image = self.font.render("Restart", 1, (43, 57, 61))
+            restart_rect = restart_image.get_rect()
+            restart_rect.center = (250, 300)
+
+            mx, my = pygame.mouse.get_pos()
+            if restart_rect.collidepoint(mx, my):
+                restart_image = self.font.render("Restart", 1, (166, 208, 221))
+                if self.click:
+                    self.running = True
+                    self.run_game()
+
+            menu_image = self.font.render("Main menu", 1, (43, 57, 61))
+            menu_rect = menu_image.get_rect()
+            menu_rect.center = (250, 350)
+
+            mx, my = pygame.mouse.get_pos()
+            if menu_rect.collidepoint(mx, my):
+                menu_image = self.font.render("Main menu", 1, (166, 208, 221))
+                if self.click:
+                    self.main_menu()
+
+            self.click = False
+
+            self.screen.blit(winner_image, winner_rect)
+            self.screen.blit(restart_image, restart_rect)
+            self.screen.blit(menu_image, menu_rect)
+
+            self.check_events()
+            pygame.display.flip()
             self.clock.tick(60)
 
     def update_screen(self):
@@ -102,6 +155,10 @@ class Game():
         self.draw_score()
 
         for group in self.sprite_groups:
+            if len(group) == self.group_size * 3:
+                self.winner_group = group
+                self.running = False
+                self.game_over()
             for sprite in group:
                 sprite.blit_sprite()
 
@@ -123,8 +180,6 @@ class Game():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.click = True
-
-        pygame_widgets.update(events)
 
     def collision(self, hunter_group, food_group, type):
         """
