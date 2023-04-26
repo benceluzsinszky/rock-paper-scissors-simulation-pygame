@@ -51,6 +51,19 @@ class Sprite(Sprite):
         """
         if self.closest_food_distance != float("inf"):
             try:
+                # distance_x = self.rect.centerx - self.closest_food.rect.centerx
+                # # distance_X negative --> self is on the left
+                # if distance_x > 0:
+                #     self.rect.x -= 1.5
+                # elif distance_x < 0:
+                #     self.rect.x += 1.5
+
+                # distance_y = self.rect.centery - self.closest_food.rect.centery
+                # # distance_y negative --> self is on the top
+                # if distance_y > 0:
+                #     self.rect.y -= 1.5
+                # elif distance_y < 0:
+                #     self.rect.y += 1.5
                 direction = pygame.math.Vector2(
                     self.closest_food.rect.center) - pygame.math.Vector2(self.rect.center)
                 try:
@@ -80,6 +93,19 @@ class Sprite(Sprite):
         """
         if self.closest_enemy_distance != float("inf"):
             try:
+                # distance_x = self.rect.centerx - self.closest_food.rect.centerx
+                # # distance_X negative --> self is on the left
+                # if distance_x > 0:
+                #     self.rect.x += 1
+                # elif distance_x < 0:
+                #     self.rect.x -= 1
+
+                # distance_y = self.rect.centery - self.closest_food.rect.centery
+                # # distance_y negative --> self is on the top
+                # if distance_y > 0:
+                #     self.rect.y += 1
+                # elif distance_y < 0:
+                #     self.rect.y -= 1
                 direction = pygame.math.Vector2(
                     self.closest_enemy.rect.center) - pygame.math.Vector2(self.rect.center)
                 try:
@@ -114,16 +140,16 @@ class Sprite(Sprite):
                     distance_x = self.rect.centerx - sprite.rect.centerx
                     # distance_X negative --> self is on the left
                     if distance_x > 0:
-                        self.rect.x += 2
+                        self.rect.x += 1.5
                     elif distance_x < 0:
-                        self.rect.x -= 2
+                        self.rect.x -= 1.5
 
                     distance_y = self.rect.centery - sprite.rect.centery
                     # distance_y negative --> self is on the top
                     if distance_y > 0:
-                        self.rect.y += 2
+                        self.rect.y += 1.5
                     elif distance_y < 0:
-                        self.rect.y -= 2
+                        self.rect.y -= 1.5
 
     def action(self, current, food, enemy):
         """
