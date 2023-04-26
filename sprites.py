@@ -57,7 +57,7 @@ class Sprite(Sprite):
                     direction.normalize_ip()
                 except ValueError:
                     pass
-                self.rect.move_ip(direction * 2)
+                self.rect.move_ip(direction * 3)
 
             except AttributeError:
                 pass

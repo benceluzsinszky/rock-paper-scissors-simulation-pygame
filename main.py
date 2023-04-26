@@ -30,8 +30,7 @@ class Game():
         self.font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 24)
 
         self.group_size = 50
-
-        self.running = False
+        self.click = False
 
     def main_menu(self):
         """Run the main loop for the menu."""
@@ -61,12 +60,11 @@ class Game():
             mx, my = pygame.mouse.get_pos()
             # make play text colored when mouse is hovered on it
             if play_rect.collidepoint(mx, my):
-                play_image = self.font.render("PLAY", 1, (166, 208, 221))
+                play_image = self.font.render("PLAY", 1, (75, 100, 110))
                 if self.click:
+                    self.click = False
                     self.slider.hide()
-                    self.running = True
                     self.run_game()
-            self.click = False
 
             self.screen.blit(play_image, play_rect)
 
@@ -89,7 +87,7 @@ class Game():
         self.create_sprites("paper", self.papers)
         self.create_sprites("scissors", self.scissors)
 
-        while self.running:
+        while True:
             self.check_events()
             self.move_sprites(self.rocks, self.scissors, self.papers)
             self.move_sprites(self.scissors, self.papers, self.rocks)
@@ -122,9 +120,9 @@ class Game():
 
             mx, my = pygame.mouse.get_pos()
             if restart_rect.collidepoint(mx, my):
-                restart_image = self.font.render("Restart", 1, (166, 208, 221))
+                restart_image = self.font.render("Restart", 1, (75, 100, 110))
                 if self.click:
-                    self.running = True
+                    self.click = False
                     self.run_game()
 
             menu_image = self.font.render("Main menu", 1, (43, 57, 61))
@@ -133,11 +131,10 @@ class Game():
 
             mx, my = pygame.mouse.get_pos()
             if menu_rect.collidepoint(mx, my):
-                menu_image = self.font.render("Main menu", 1, (166, 208, 221))
+                menu_image = self.font.render("Main menu", 1, (75, 100, 110))
                 if self.click:
+                    self.click = False
                     self.main_menu()
-
-            self.click = False
 
             self.screen.blit(winner_image, winner_rect)
             self.screen.blit(restart_image, restart_rect)
@@ -157,7 +154,6 @@ class Game():
         for group in self.sprite_groups:
             if len(group) == self.group_size * 3:
                 self.winner_group = group
-                self.running = False
                 self.game_over()
             for sprite in group:
                 sprite.blit_sprite()
