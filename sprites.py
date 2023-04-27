@@ -22,6 +22,9 @@ class Sprite(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = location[0]
         self.rect.y = location[1]
+        self.food_angle = 0
+        self.enemy_angle = 0
+        self.speed = game.speed
         self.closest_food = None
         self.closest_food_distance = float("inf")
         self.closest_enemy = None
@@ -39,11 +42,13 @@ class Sprite(Sprite):
         Gets info about closest food sprite.
         """
         for sprite in food:
-            distance = math.sqrt(
-                (sprite.rect.centerx - self.rect.centerx)**2 + (sprite.rect.centery - self.rect.centery)**2)
+            distance_x = sprite.rect.centerx - self.rect.centerx
+            distance_y = sprite.rect.centery - self.rect.centery
+            distance = math.sqrt(distance_x**2 + distance_y**2)
             if distance < self.closest_food_distance:
                 self.closest_food_distance = distance
                 self.closest_food = sprite
+                self.food_angle = math.atan2(distance_y, distance_x)
 
     def eat(self):
         """
@@ -51,26 +56,8 @@ class Sprite(Sprite):
         """
         if self.closest_food_distance != float("inf"):
             try:
-                # distance_x = self.rect.centerx - self.closest_food.rect.centerx
-                # # distance_X negative --> self is on the left
-                # if distance_x > 0:
-                #     self.rect.x -= 1.5
-                # elif distance_x < 0:
-                #     self.rect.x += 1.5
-
-                # distance_y = self.rect.centery - self.closest_food.rect.centery
-                # # distance_y negative --> self is on the top
-                # if distance_y > 0:
-                #     self.rect.y -= 1.5
-                # elif distance_y < 0:
-                #     self.rect.y += 1.5
-                direction = pygame.math.Vector2(
-                    self.closest_food.rect.center) - pygame.math.Vector2(self.rect.center)
-                try:
-                    direction.normalize_ip()
-                except ValueError:
-                    pass
-                self.rect.move_ip(direction * 3)
+                self.rect.centerx += math.cos(self.food_angle) * random.uniform(self.speed-0.4, self.speed)
+                self.rect.centery += math.sin(self.food_angle) * random.uniform(self.speed-0.4, self.speed)
 
             except AttributeError:
                 pass
@@ -81,11 +68,13 @@ class Sprite(Sprite):
         Gets info about closest enemy sprite.
         """
         for sprite in enemy:
-            distance = math.sqrt((
-                sprite.rect[0] - self.rect[1])**2 + (sprite.rect[1] - self.rect[1])**2)
+            distance_x = sprite.rect.centerx - self.rect.centerx
+            distance_y = sprite.rect.centery - self.rect.centery
+            distance = math.sqrt(distance_x**2 + distance_y**2)
             if distance < self.closest_enemy_distance:
                 self.closest_enemy_distance = distance
                 self.closest_enemy = sprite
+                self.enemy_angle = math.atan2(distance_y, distance_x)
 
     def run(self):
         """
@@ -93,26 +82,8 @@ class Sprite(Sprite):
         """
         if self.closest_enemy_distance != float("inf"):
             try:
-                # distance_x = self.rect.centerx - self.closest_food.rect.centerx
-                # # distance_X negative --> self is on the left
-                # if distance_x > 0:
-                #     self.rect.x += 1
-                # elif distance_x < 0:
-                #     self.rect.x -= 1
-
-                # distance_y = self.rect.centery - self.closest_food.rect.centery
-                # # distance_y negative --> self is on the top
-                # if distance_y > 0:
-                #     self.rect.y += 1
-                # elif distance_y < 0:
-                #     self.rect.y -= 1
-                direction = pygame.math.Vector2(
-                    self.closest_enemy.rect.center) - pygame.math.Vector2(self.rect.center)
-                try:
-                    direction.normalize_ip()
-                except ValueError:
-                    pass
-                self.rect.move_ip(direction * - 2)
+                self.rect.centerx -= math.cos(self.enemy_angle) * random.uniform(self.speed-0.6, self.speed-0.2)
+                self.rect.centery -= math.sin(self.enemy_angle) * random.uniform(self.speed-0.6, self.speed-0.2)
             except AttributeError:
                 pass
             self.closest_enemy_distance = float("inf")

@@ -12,9 +12,6 @@ BG_COLOR = (255, 249, 222)
 
 
 class Game():
-    """
-    This class initializes the Pygame module and creates the game screen.
-    """
 
     def __init__(self) -> None:
         """
@@ -34,20 +31,37 @@ class Game():
 
     def main_menu(self):
         """Run the main loop for the menu."""
-        self.slider = Slider(
+
+        self.speed_slider = Slider(
+            self.screen,
+            100, 150, 300, 15,
+            min=1, max=10, step=1, initial=2,
+            colour=(166, 208, 221),
+            handleColour=(87, 117, 127))
+
+        self.group_slider = Slider(
             self.screen,
             100, 250, 300, 15,
-            min=0, max=150, step=1, initial=50,
+            min=1, max=150, step=1, initial=50,
             colour=(166, 208, 221),
             handleColour=(87, 117, 127))
 
         while True:
             self.screen.fill(BG_COLOR)
 
-            counter_font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 12)
+            self.click = False
+            self.check_events()
 
-            self.group_size = self.slider.getValue()
-            counter_image = counter_font.render(f"Group size: {self.group_size}", 1, (43, 57, 61))
+            slider_font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 14)
+
+            self.speed = self.speed_slider.getValue()
+            speed_image = slider_font.render(f"Speed: {self.speed}", 1, (43, 57, 61))
+            speed_rect = speed_image.get_rect()
+            speed_rect.center = (250, 175)
+            self.screen.blit(speed_image, speed_rect)
+
+            self.group_size = self.group_slider.getValue()
+            counter_image = slider_font.render(f"Group size: {self.group_size}", 1, (43, 57, 61))
             counter_rect = counter_image.get_rect()
             counter_rect.center = (250, 275)
             self.screen.blit(counter_image, counter_rect)
@@ -62,13 +76,12 @@ class Game():
             if play_rect.collidepoint(mx, my):
                 play_image = self.font.render("PLAY", 1, (75, 100, 110))
                 if self.click:
-                    self.click = False
-                    self.slider.hide()
+                    self.speed_slider.hide()
+                    self.group_slider.hide()
                     self.run_game()
 
             self.screen.blit(play_image, play_rect)
 
-            self.check_events()
             pygame_widgets.update(pygame.event.get())
             pygame.display.flip()
             self.clock.tick(60)
@@ -77,6 +90,8 @@ class Game():
         """
         Starts the game loop that continues until the user exits the game.
         """
+        self.click = False
+
         self.rocks = pygame.sprite.Group()
         self.papers = pygame.sprite.Group()
         self.scissors = pygame.sprite.Group()
@@ -122,7 +137,6 @@ class Game():
             if restart_rect.collidepoint(mx, my):
                 restart_image = self.font.render("Restart", 1, (75, 100, 110))
                 if self.click:
-                    self.click = False
                     self.run_game()
 
             menu_image = self.font.render("Main menu", 1, (43, 57, 61))
@@ -133,7 +147,6 @@ class Game():
             if menu_rect.collidepoint(mx, my):
                 menu_image = self.font.render("Main menu", 1, (75, 100, 110))
                 if self.click:
-                    self.click = False
                     self.main_menu()
 
             self.screen.blit(winner_image, winner_rect)
@@ -223,14 +236,14 @@ class Game():
         """
         multipilier = RESX / (self.group_size * 3)
 
-        len_rocks = len(self.rocks) * multipilier
-        len_papers = len(self.papers) * multipilier
+        len_rocks = (len(self.rocks) * multipilier)
+        len_papers = (len(self.papers) * multipilier)
 
         pygame.draw.rect(self.screen, (166, 208, 221), [0, RESY-25, len_rocks, RESY])
         pygame.draw.rect(self.screen, (255, 211, 176), [
                          len_rocks, RESY-25, len_papers, RESY])
         pygame.draw.rect(self.screen, (255, 105, 105), [
-                         len_rocks+len_papers, RESY-25, RESX, RESY])
+                         len_rocks+len_papers-2, RESY-25, RESX, RESY])
 
 
 if __name__ == "__main__":
