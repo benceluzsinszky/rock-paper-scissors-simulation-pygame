@@ -25,6 +25,7 @@ class Sprite(Sprite):
         self.food_angle = 0
         self.enemy_angle = 0
         self.speed = game.speed
+        self.repulsion_strength = 2
         self.closest_food = None
         self.closest_food_distance = float("inf")
         self.closest_enemy = None
@@ -88,7 +89,7 @@ class Sprite(Sprite):
                 pass
             self.closest_enemy_distance = float("inf")
 
-    def check_walls(self):
+    def check_walls(self, game):
         """
         Stops sprite at walls.
         """
@@ -101,35 +102,59 @@ class Sprite(Sprite):
         if self.rect.right > 500:
             self.rect.right = 500
 
+        # Calculate repulsion force from walls
+        repulsion_force = pygame.math.Vector2(0, 0)
+        if self.rect.left < 50:
+            repulsion_force.x += 1 / (self.rect.left - 50)
+        if self.rect.right > 450:
+            repulsion_force.x -= 1 / (self.rect.right - 450)
+        if self.rect.top < 50:
+            repulsion_force.y += 1 / (self.rect.top - 50)
+        if self.rect.bottom > 410:
+            repulsion_force.y -= 1 / (self.rect.bottom - 410)
+
+        # Apply repulsion force to move sprite away from walls
+        self.rect.move_ip(repulsion_force * self.repulsion_strength)
+
     def check_self_collision(self, current):
         """
         Stops sprites in the same group from colliding.
         """
+        # create a list of sprites within a certain distance of the player
+        nearby_sprites = []
         for sprite in current:
             if sprite != self:
-                if pygame.sprite.collide_rect(self, sprite):
-                    distance_x = self.rect.centerx - sprite.rect.centerx
-                    # distance_X negative --> self is on the left
-                    if distance_x > 0:
-                        self.rect.x += 1.5
-                    elif distance_x < 0:
-                        self.rect.x -= 1.5
+                distance_x = sprite.rect.centerx - self.rect.centerx
+                distance_y = sprite.rect.centery - self.rect.centery
+                distance = math.sqrt(distance_x**2 + distance_y**2)
+                if distance < 50:
+                    nearby_sprites.append(sprite)
 
-                    distance_y = self.rect.centery - sprite.rect.centery
-                    # distance_y negative --> self is on the top
-                    if distance_y > 0:
-                        self.rect.y += 1.5
-                    elif distance_y < 0:
-                        self.rect.y -= 1.5
+        # check for collisions with nearby sprites
+        for sprite in nearby_sprites:
+            if pygame.sprite.collide_rect(self, sprite):
+                distance_x = self.rect.centerx - sprite.rect.centerx
+                # distance_X negative --> self is on the left
+                if distance_x > 0:
+                    self.rect.x += 1
+                elif distance_x < 0:
+                    self.rect.x -= 1
 
-    def action(self, current, food, enemy):
+                distance_y = self.rect.centery - sprite.rect.centery
+                # distance_y negative --> self is on the top
+                if distance_y > 0:
+                    self.rect.y += 1
+                elif distance_y < 0:
+                    self.rect.y -= 1
+
+    def action(self, game, current, food, enemy):
         """
         Does every action for sprite.
         """
         self.random_movement()
         self.get_food_info(food)
         self.get_enemy_info(enemy)
-        self.check_walls()
+        self.check_walls(game)
         self.eat()
         if self.closest_enemy_distance < 50:
             self.run()

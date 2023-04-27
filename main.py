@@ -2,7 +2,6 @@ import pygame
 import pygame_widgets
 import sys
 import random
-
 from pygame_widgets.slider import Slider
 
 from sprites import Sprite
@@ -23,7 +22,8 @@ class Game():
 
         pygame.display.set_caption("Rock Paper Scissors")
 
-        self.screen = pygame.display.set_mode((RESX, RESY))
+        flags = pygame.HWSURFACE | pygame.DOUBLEBUF  # enable hardware acceleration
+        self.screen = pygame.display.set_mode((RESX, RESY), flags)
         self.font = pygame.font.Font("font/PressStart2P-vaV7.ttf", 24)
 
         self.group_size = 50
@@ -218,7 +218,7 @@ class Game():
         Makes sprites move.
         """
         for sprite in current:
-            sprite.action(current, food, enemy)
+            sprite.action(self, current, food, enemy)
 
     def create_sprites(self, type, group):
         """
