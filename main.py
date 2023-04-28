@@ -2,7 +2,9 @@ import pygame
 import pygame_widgets
 import sys
 import random
+
 from pygame_widgets.slider import Slider
+from scipy.spatial import KDTree
 
 from sprites import Sprite
 
@@ -102,11 +104,26 @@ class Game():
         self.create_sprites("paper", self.papers)
         self.create_sprites("scissors", self.scissors)
 
+        self.get_sprite_locations()
+
         while True:
             self.check_events()
-            self.move_sprites(self.rocks, self.scissors, self.papers)
-            self.move_sprites(self.scissors, self.papers, self.rocks)
-            self.move_sprites(self.papers, self.rocks, self.scissors)
+            self.move_sprites(
+                self.rock_tree, self.rock_list,
+                self.scissors_tree, self.scissors_list,
+                self.paper_tree, self.paper_list
+                )
+            self.move_sprites(
+                self.paper_tree, self.paper_list,
+                self.rock_tree, self.rock_list,
+                self.scissors_tree, self.scissors_list
+                )
+            self.move_sprites(
+                self.scissors_tree, self.scissors_list,
+                self.paper_tree, self.paper_list,
+                self.rock_tree, self.rock_list
+                )
+            self.get_sprite_locations()
             self.check_collisions()
             self.update_screen()
             self.clock.tick(60)
@@ -190,6 +207,29 @@ class Game():
                 if event.button == 1:
                     self.click = True
 
+    def get_sprite_locations(self):
+        """
+        Creates a kd-tree to search for nearby sprites.
+        """
+        rock_locations = [(sprite.rect.centerx, sprite.rect.centery) for sprite in self.rocks]
+        try:
+            self.rock_tree = KDTree(rock_locations)
+        except ValueError:
+            ...
+        self.rock_list = [sprite for sprite in self.rocks]
+        paper_locations = [(sprite.rect.centerx, sprite.rect.centery) for sprite in self.papers]
+        try:
+            self.paper_tree = KDTree(paper_locations)
+        except ValueError:
+            ...
+        self.paper_list = [sprite for sprite in self.papers]
+        scissors_locations = [(sprite.rect.centerx, sprite.rect.centery) for sprite in self.scissors]
+        try:
+            self.scissors_tree = KDTree(scissors_locations)
+        except ValueError:
+            ...
+        self.scissors_list = [sprite for sprite in self.scissors]
+
     def collision(self, hunter_group, food_group, type):
         """
         Kills food sprite, creates a new sprite in the 'hunter' group
@@ -213,12 +253,12 @@ class Game():
         self.collision(self.scissors, self.papers, "scissors")
         self.collision(self.papers, self.rocks, "paper")
 
-    def move_sprites(self, current, food, enemy):
+    def move_sprites(self, current_tree, current_list, food_tree, food_list, enemy_tree, enemy_list):
         """
         Makes sprites move.
         """
-        for sprite in current:
-            sprite.action(self, current, food, enemy)
+        for sprite in current_list:
+            sprite.action(current_tree, current_list, food_tree, food_list, enemy_tree, enemy_list)
 
     def create_sprites(self, type, group):
         """
