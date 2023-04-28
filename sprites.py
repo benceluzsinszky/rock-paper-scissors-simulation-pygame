@@ -17,6 +17,7 @@ class Sprite(Sprite):
         super().__init__()
         self.screen = game.screen
         self.image = pygame.image.load(f"sprites/{character}.png")
+        self.image.convert_alpha()
         self.image = pygame.transform.scale(self.image, (15, 15))
         self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect()

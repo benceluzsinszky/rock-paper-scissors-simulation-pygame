@@ -23,6 +23,8 @@ class Game():
         self.clock = pygame.time.Clock()
 
         pygame.display.set_caption("Rock Paper Scissors")
+        icon = pygame.image.load('sprites/logo.png')
+        pygame.display.set_icon(icon)
 
         flags = pygame.HWSURFACE | pygame.DOUBLEBUF  # enable hardware acceleration
         self.screen = pygame.display.set_mode((RESX, RESY), flags)
