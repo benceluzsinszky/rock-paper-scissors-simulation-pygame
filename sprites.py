@@ -81,7 +81,8 @@ class Sprite(Sprite):
         if self.rect.right > 500:
             self.rect.right = 500
 
-        # Calculate repulsion force from walls
+        # make sprites forced away from walls:
+        # calculate repulsion force from walls
         repulsion_force = pygame.math.Vector2(0, 0)
         if self.rect.left < 100:
             repulsion_force.x += 1 / (self.rect.left - 100)
@@ -92,7 +93,7 @@ class Sprite(Sprite):
         if self.rect.bottom > 360:
             repulsion_force.y -= 1 / (self.rect.bottom - 360)
 
-        # Apply repulsion force to move sprite away from walls
+        # apply repulsion force to move sprite away from walls
         self.rect.move_ip(repulsion_force * self.repulsion_strength)
 
     def check_self_collision(self, current_tree, current_list):
@@ -120,7 +121,6 @@ class Sprite(Sprite):
             my_location = (self.rect.centerx, self.rect.centery)
             dist, idx = current_tree.query([my_location], k=6)
 
-            # `idx` is the index of the nearest sprite in info_list
             closest_5 = [current_list[idx[0][i+1]] for i in range(5)]
             move_away(closest_5)
         else:
