@@ -8,4 +8,4 @@ SCISSORS_COLOR = (255, 105, 105)
 
 TEXTCOLOR = (43, 57, 61)
 TEXTCOLOR_HIGHLIGHTED = (75, 100, 110)
-FONT = "font/PressStart2P-vaV7.ttf"
+FONT = "assets/font/PressStart2P-vaV7.ttf"

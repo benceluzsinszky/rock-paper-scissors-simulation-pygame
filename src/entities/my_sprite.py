@@ -24,7 +24,7 @@ class MySprite(Sprite):
         super().__init__()
         self.screen = screen
         self.sprite_text = image
-        self.image = pygame.image.load(f"sprites/{self.sprite_text}.png")
+        self.image = pygame.image.load(f"assets/sprites/{self.sprite_text}.png")
         self.rect = self.create_rect()
         self.rect.x = location[0]
         self.rect.y = location[1]

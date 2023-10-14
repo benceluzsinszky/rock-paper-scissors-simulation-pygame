@@ -12,7 +12,7 @@ class Main():
         self.current_screen = "menu"
         self.screen = pygame.display.set_mode((constants.RESOLUTION, constants.RESOLUTION))
         pygame.display.set_caption("Rock Paper Scissors")
-        icon = pygame.image.load('sprites/logo.png')
+        icon = pygame.image.load('assets/sprites/logo.png')
         pygame.display.set_icon(icon)
 
     def run_game(self):
