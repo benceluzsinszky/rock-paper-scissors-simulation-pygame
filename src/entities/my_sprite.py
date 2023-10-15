@@ -116,6 +116,7 @@ class MySprite(Sprite):
         return distance < 100
 
     def eat(self, prey):
+        # TODO: images are flickering when eaten
         sprite = MySprite(self.screen,
                           self.sprite_text,
                           prey.get_coordinates(),
@@ -141,29 +142,30 @@ class MySprite(Sprite):
                             self.rect.centery > (constants.RESOLUTION-40) * 0.27)
         if not in_outer_quarter:
             return
-        # Play with avoidance_weight to make the effect weaker or stronger.
-        avoidance_weight = 35
 
-        avoidance_x = self.calculate_aviodance(self.rect.x) * avoidance_weight
-        avoidance_y = self.calculate_aviodance(self.rect.y) * avoidance_weight
-        # Coordinates can only be integers, so does not work very well.
-        self.rect.x += avoidance_x
-        self.rect.y += avoidance_y
+        avoidance_x = self.calculate_aviodance(self.rect.x)
+        avoidance_y = self.calculate_aviodance(self.rect.y)
+
+        self.rect.x += random.uniform(0, avoidance_x)
+        self.rect.y += random.uniform(0, avoidance_y)
 
     def calculate_aviodance(self, coordinate):
         """
         Calculate avoidance based on the position of the sprite.
         """
+        # Play with avoidance_weight to make the effect weaker or stronger.
+        avoidance_weight = self.speed
         distance_from_zero = coordinate
         distance_from_max = constants.RESOLUTION - coordinate
         # get position
-        avoidance = min(distance_from_zero, distance_from_max)
-        #  if in the econd half of the coordinates, inverse avoidance
-        if avoidance == distance_from_max:
+        distance_from_border = min(distance_from_zero, distance_from_max)
+        if distance_from_border == 0:
+            return 0
+        avoidance = avoidance_weight - ((avoidance_weight - 1) / (constants.RESOLUTION / 4)) * distance_from_border
+        #  if in the second half of the coordinates, inverse avoidance
+        if distance_from_border == distance_from_max:
             avoidance *= -1
-        if avoidance != 0:
-            return 1 / avoidance
-        return 0
+        return avoidance
 
     def stay_inside_walls(self):
         """
