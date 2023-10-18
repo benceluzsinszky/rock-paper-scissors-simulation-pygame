@@ -10,13 +10,11 @@ class MenuScreen(TextScreen):
         self.current_screen = "menu"
         self.screen = screen
         self.speed_slider = self.set_up_slider(
-            y_coordinate=150,
-            max_value=10,
-            initial_value=2)
+            y_coordinate=150, max_value=10, initial_value=2
+        )
         self.group_slider = self.set_up_slider(
-            y_coordinate=250,
-            max_value=150,
-            initial_value=30)
+            y_coordinate=250, max_value=150, initial_value=30
+        )
 
     def get_speed(self):
         return self.speed_slider.getValue()
@@ -38,10 +36,17 @@ class MenuScreen(TextScreen):
     def set_up_slider(self, y_coordinate, max_value, initial_value):
         slider = Slider(
             self.screen,
-            100, y_coordinate, 300, 15,
-            min=1, max=max_value, step=1, initial=initial_value,
+            100,
+            y_coordinate,
+            300,
+            15,
+            min=1,
+            max=max_value,
+            step=1,
+            initial=initial_value,
             colour=(166, 208, 221),
-            handleColour=(87, 117, 127))
+            handleColour=(87, 117, 127),
+        )
         return slider
 
     def play_button(self):

@@ -4,16 +4,16 @@ from src.utils import constants
 
 
 class TextScreen(Screen):
-
     def blit_text(
-          self,
-          text,
-          y_coordinate,
-          color=constants.TEXTCOLOR,
-          font_size=14,):
+        self,
+        text,
+        y_coordinate,
+        color=constants.TEXTCOLOR,
+        font_size=14,
+    ):
         image = pygame.font.Font(constants.FONT, font_size).render(text, 1, color)
         rect = image.get_rect()
-        rect.center = (constants.RESOLUTION/2, y_coordinate)
+        rect.center = (constants.RESOLUTION / 2, y_coordinate)
         self.screen.blit(image, rect)
         return rect
 
@@ -25,9 +25,11 @@ class TextScreen(Screen):
         # Highlight text colored when mouse is hovered on it
         if rect.collidepoint(mx, my):
             self.blit_text(
-                text, rect.centery,
+                text,
+                rect.centery,
                 color=constants.TEXTCOLOR_HIGHLIGHTED,
-                font_size=font_size)
+                font_size=font_size,
+            )
             if self.click:
                 self.click = False
                 method()

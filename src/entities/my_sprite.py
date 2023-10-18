@@ -10,14 +10,9 @@ class MySprite(Sprite):
     Class that creates a Rock/Paper/Scissor sprite.
     """
 
-    def __init__(self,
-                 screen,
-                 image,
-                 location,
-                 speed,
-                 own_group,
-                 hunter_group,
-                 prey_group):
+    def __init__(
+        self, screen, image, location, speed, own_group, hunter_group, prey_group
+    ):
         """
         Initializes a single sprite.
         """
@@ -50,7 +45,7 @@ class MySprite(Sprite):
 
     def get_closest(self, group):
         closest_sprite = None
-        closest_distance = float('inf')
+        closest_distance = float("inf")
         for sprite in group:
             distance = self.get_distance(sprite)
             if distance < closest_distance:
@@ -106,10 +101,18 @@ class MySprite(Sprite):
         if distance == 0:
             return
         distance_x = sprite.get_coordinates()[0] - self.rect.x
-        self.rect.x += (distance_x / distance) * random.uniform(self.speed-0.2, self.speed) * direction
+        self.rect.x += (
+            (distance_x / distance)
+            * random.uniform(self.speed - 0.2, self.speed)
+            * direction
+        )
 
         distance_y = sprite.get_coordinates()[1] - self.rect.y
-        self.rect.y += (distance_y / distance) * random.uniform(self.speed-0.2, self.speed) * direction
+        self.rect.y += (
+            (distance_y / distance)
+            * random.uniform(self.speed - 0.2, self.speed)
+            * direction
+        )
 
     def hunter_close_by(self, hunter):
         distance = self.get_distance(hunter)
@@ -117,13 +120,15 @@ class MySprite(Sprite):
 
     def eat(self, prey):
         # TODO: images are flickering when eaten
-        sprite = MySprite(self.screen,
-                          self.sprite_text,
-                          prey.get_coordinates(),
-                          self.speed,
-                          self.own_group,
-                          self.hunter_group,
-                          self.prey_group)
+        sprite = MySprite(
+            self.screen,
+            self.sprite_text,
+            prey.get_coordinates(),
+            self.speed,
+            self.own_group,
+            self.hunter_group,
+            self.prey_group,
+        )
         self.own_group.add(sprite)
         prey.kill()
 
@@ -136,10 +141,12 @@ class MySprite(Sprite):
         Make sprites avoid screen borders.
         """
         # Only avoid walls, if sprite is in the outer quarters
-        in_outer_quarter = (self.rect.centerx < constants.RESOLUTION * 0.25 or
-                            self.rect.centerx > constants.RESOLUTION * 0.75 or
-                            self.rect.centery < constants.RESOLUTION * 0.25 or
-                            self.rect.centery > (constants.RESOLUTION-40) * 0.27)
+        in_outer_quarter = (
+            self.rect.centerx < constants.RESOLUTION * 0.25
+            or self.rect.centerx > constants.RESOLUTION * 0.75
+            or self.rect.centery < constants.RESOLUTION * 0.25
+            or self.rect.centery > (constants.RESOLUTION - 40) * 0.27
+        )
         if not in_outer_quarter:
             return
 
@@ -161,7 +168,11 @@ class MySprite(Sprite):
         distance_from_border = min(distance_from_zero, distance_from_max)
         if distance_from_border == 0:
             return 0
-        avoidance = avoidance_weight - ((avoidance_weight - 1) / (constants.RESOLUTION / 4)) * distance_from_border
+        avoidance = (
+            avoidance_weight
+            - ((avoidance_weight - 1) / (constants.RESOLUTION / 4))
+            * distance_from_border
+        )
         #  if in the second half of the coordinates, inverse avoidance
         if distance_from_border == distance_from_max:
             avoidance *= -1

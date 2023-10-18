@@ -54,13 +54,15 @@ class GameScreen(Screen):
         for _ in range(self.group_size):
             random_x = random.randint(10, 490)
             random_y = random.randint(10, 490)
-            sprite = MySprite(self.screen,
-                              image,
-                              (random_x, random_y),
-                              self.speed,
-                              own_group,
-                              hunter_group,
-                              prey_group)
+            sprite = MySprite(
+                self.screen,
+                image,
+                (random_x, random_y),
+                self.speed,
+                own_group,
+                hunter_group,
+                prey_group,
+            )
             own_group.add(sprite)
 
     def draw_score_bars(self):
@@ -74,4 +76,4 @@ class GameScreen(Screen):
 
         self.rock_score.draw(0, len_rocks)
         self.paper_score.draw(len_rocks, len_papers)
-        self.scissors_score.draw(len_rocks+len_papers-2, constants.RESOLUTION)
+        self.scissors_score.draw(len_rocks + len_papers - 2, constants.RESOLUTION)

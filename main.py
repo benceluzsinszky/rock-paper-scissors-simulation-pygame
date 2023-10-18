@@ -5,14 +5,16 @@ from src.entities.game_over_screen import GameOverScreen
 from src.entities.game_screen import GameScreen
 
 
-class Main():
+class Main:
     def __init__(self):
         pygame.init()
         self.running = True
         self.current_screen = "menu"
-        self.screen = pygame.display.set_mode((constants.RESOLUTION, constants.RESOLUTION))
+        self.screen = pygame.display.set_mode(
+            (constants.RESOLUTION, constants.RESOLUTION)
+        )
         pygame.display.set_caption("Rock Paper Scissors")
-        icon = pygame.image.load('assets/sprites/logo.png')
+        icon = pygame.image.load("assets/sprites/logo.png")
         pygame.display.set_icon(icon)
 
     def run_game(self):
