@@ -1,3 +1,6 @@
+"""
+Module for the abstract class `Screen`.
+"""
 import sys
 from abc import ABC, abstractmethod
 import pygame
