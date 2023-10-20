@@ -11,6 +11,7 @@ class TextScreen(Screen):
     """
     A subclass of `Screen` for managing text-based game screens.
     """
+
     def blit_text(
         self,
         text,
