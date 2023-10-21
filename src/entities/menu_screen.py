@@ -34,6 +34,7 @@ class MenuScreen(TextScreen):
     def get_speed(self):
         """
         Get the current value of the speed slider.
+        Used for initializing `Game` object in `Main` class.
 
         Returns:
             float: The selected speed value.
@@ -43,6 +44,7 @@ class MenuScreen(TextScreen):
     def get_group_size(self):
         """
         Get the current value of the group size slider.
+        Used for initializing `Game` object in `Main` class.
 
         Returns:
             int: The selected group size value.
