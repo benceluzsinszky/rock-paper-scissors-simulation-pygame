@@ -6,7 +6,7 @@ This module defines a set of constants commonly used in the application.
 RESOLUTION = 500
 
 # Background color
-BGCOLOR = (255, 249, 222)
+BGCOLOR = (255, 253, 242)
 
 # Color for contender groups
 ROCK_COLOR = (166, 208, 221)
