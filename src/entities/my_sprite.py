@@ -24,6 +24,7 @@ class MySprite(Sprite):
         self.rect.x = location[0]
         self.rect.y = location[1]
         self.speed = speed
+        self.size = 15
         self.own_group = own_group
         self.hunter_group = hunter_group
         self.prey_group = prey_group
@@ -37,10 +38,14 @@ class MySprite(Sprite):
     def get_sprite_text(self):
         return self.sprite_text
 
-    def get_distance(self, sprite):
+    def get_coordinate_distances(self, sprite):
         sprite_coordinates = sprite.get_coordinates()
         distance_x = sprite_coordinates[0] - self.rect.x
         distance_y = sprite_coordinates[1] - self.rect.y
+        return distance_x, distance_y
+
+    def get_distance(self, sprite):
+        distance_x, distance_y = self.get_coordinate_distances(sprite)
         return math.sqrt(distance_x**2 + distance_y**2)
 
     def get_closest(self, group):
@@ -74,22 +79,10 @@ class MySprite(Sprite):
         self.check_walls()
 
     def move_sprite(self):
-        self.random_movement()
-        self.hunter_prey_behaviour()
-
-    def random_movement(self):
-        """
-        Makes random movement.
-        """
-        self.rect.x += random.uniform(-1, 1)
-        self.rect.y += random.uniform(-1, 1)
-
-    def hunter_prey_behaviour(self):
         closest_prey = self.get_closest(self.prey_group)
         if closest_prey:
             self.chase(closest_prey, 1)
-            if pygame.sprite.collide_rect(self, closest_prey):
-                self.eat(closest_prey)
+            self.eat(closest_prey)
 
         closest_hunter = self.get_closest(self.hunter_group)
         if closest_hunter:
@@ -100,26 +93,22 @@ class MySprite(Sprite):
         distance = self.get_distance(sprite)
         if distance == 0:
             return
-        distance_x = sprite.get_coordinates()[0] - self.rect.x
-        self.rect.x += (
-            (distance_x / distance)
-            * random.uniform(self.speed - 0.2, self.speed)
-            * direction
-        )
-
-        distance_y = sprite.get_coordinates()[1] - self.rect.y
-        self.rect.y += (
-            (distance_y / distance)
-            * random.uniform(self.speed - 0.2, self.speed)
-            * direction
-        )
+        distance_x, distance_y = self.get_coordinate_distances(sprite)
+        movement = (direction * random.uniform(self.speed * 0.7, self.speed)) / distance
+        self.rect.x += distance_x * movement
+        self.rect.y += distance_y * movement
 
     def hunter_close_by(self, hunter):
         distance = self.get_distance(hunter)
-        return distance < 100
+        return distance < 200
 
     def eat(self, prey):
-        # TODO: images are flickering when eaten
+        distance_x, distance_y = self.get_coordinate_distances(prey)
+        hitbox = self.size * 0.7
+
+        if not (abs(distance_x) <= hitbox and abs(distance_y) <= hitbox):
+            return
+
         sprite = MySprite(
             self.screen,
             self.sprite_text,
@@ -130,6 +119,7 @@ class MySprite(Sprite):
             self.prey_group,
         )
         self.own_group.add(sprite)
+        sprite.blit_sprite()
         prey.kill()
 
     def check_walls(self):
